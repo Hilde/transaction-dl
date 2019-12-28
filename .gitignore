@@ -1,0 +1,8 @@
+.gradle/
+.idea/
+build/
+work/
+
+/*.csv
+/*.xls
+/*.xml
