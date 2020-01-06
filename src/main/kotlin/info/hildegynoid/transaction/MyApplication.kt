@@ -41,6 +41,13 @@ class MyApplication : Application() {
         stage.scene = Scene(parent, 400.0, 400.0)
         stage.title = APPLICATION_TITLE + " Version." + buildProperties.version
         stage.show()
+
+        stage.showingProperty().addListener { observable, oldValue, newValue ->
+            if (oldValue == true && newValue == false) {
+                context.close()
+                Platform.exit()
+            }
+        }
     }
 
     override fun stop() {
