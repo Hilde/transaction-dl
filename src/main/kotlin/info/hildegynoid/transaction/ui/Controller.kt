@@ -16,9 +16,8 @@ import java.time.LocalDate
 import java.util.concurrent.Executors
 
 @Component
-class Controller(
-    private val httpClient: HttpClient
-) {
+class Controller(private val httpClient: HttpClient) {
+
     private val logger = KotlinLogging.logger {}
 
     private val executorService = Executors.newSingleThreadExecutor()

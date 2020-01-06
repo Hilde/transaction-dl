@@ -6,28 +6,29 @@ plugins {
     id "org.jetbrains.kotlin.plugin.spring" version "1.3.61"
     id "org.openjfx.javafxplugin" version "0.0.8"
     id "org.jlleitschuh.gradle.ktlint" version "9.1.1"
+    id "edu.sc.seis.launch4j" version "2.4.6"
+    id "edu.sc.seis.macAppBundle" version "2.3.0"
 }
 
 group "info.hildegynoid"
-version "1.0-SNAPSHOT"
+version "0.1.0"
 
 repositories {
     mavenCentral()
     jcenter()
 }
 
-//def coroutinesVersion = "1.3.3"
+def mainClass = "info.hildegynoid.transaction.Main"
 def kotlinLoggingVersion = "1.7.8"
 def okhttpVersion = "4.1.0"
 def jsoupVersion = "1.12.1"
-def h2Version = "1.4.200"
+def snakeYamlVersion = "1.25"
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter"
     implementation "org.springframework:spring-web"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-//    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
 
     implementation "io.github.microutils:kotlin-logging:$kotlinLoggingVersion"
 
@@ -35,11 +36,7 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp-urlconnection:$okhttpVersion"
     implementation "org.jsoup:jsoup:$jsoupVersion"
 
-    runtimeOnly "com.h2database:h2:$h2Version"
-
-//    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
-//    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
-//    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
+    implementation "org.yaml:snakeyaml:$snakeYamlVersion"
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -58,11 +55,60 @@ test {
     useJUnitPlatform()
 }
 
+springBoot {
+    buildInfo()
+}
+
 javafx {
-    version = "13"
+    version = "11"
     modules = ['javafx.controls', 'javafx.fxml']
+    //configuration = "compileOnly"
 }
 
 ktlint {
     disabledRules = ["import-ordering"]
+}
+
+task copyWinRuntime(type: Copy) {
+    from "jdk/jre-win"
+    into "build/launch4j/jre"
+}
+
+task copyMacRuntime(type: Copy) {
+    from "jdk/jre-mac"
+    into "build/macApp/transaction-dl.app/Contents/Plugins/openjdk-13.0.1.jdk/Contents/Home"
+}
+
+tasks.createExe.dependsOn bootJar
+tasks.createExe.dependsOn copyWinRuntime
+tasks.createApp.dependsOn bootJar
+tasks.createApp.dependsOn copyMacRuntime
+
+launch4j {
+//    mainClassName = mainClass
+
+    copyConfigurable = bootJar.outputs.files
+    jar = "lib/${bootJar.archiveName}"
+
+//    copyConfigurable = project.tasks.fatCapsule.outputs.files
+//    jar = "lib/${project.tasks.fatCapsule.archiveName}"
+//    jar = "../libs/${fatCapsule.archiveName}"
+
+    bundledJrePath = 'jre'
+    bundledJre64Bit = true
+
+//    icon = "src/main/resources/icons/appicon.ico"
+}
+
+macAppBundle {
+    jarTask = "bootJar"
+    mainClassName = mainClass
+    icon = "src/main/resources/icons/appicon.icns"
+    appStyle = 'universalJavaApplicationStub'
+}
+
+task buildAll {
+    group = 'distribution'
+    dependsOn ':createExe'
+    dependsOn ':createApp'
 }

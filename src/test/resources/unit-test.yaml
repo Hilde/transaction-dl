@@ -1,0 +1,6 @@
+users:
+  - username: Jon Doe
+    sessionToken: 1234abcd
+  - username: Jane Doe
+    sessionToken: 9876dcba
+
