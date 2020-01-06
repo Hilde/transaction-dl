@@ -6,13 +6,13 @@ import javafx.concurrent.WorkerStateEvent
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.control.Button
+import javafx.scene.control.DatePicker
 import javafx.scene.control.Label
 import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import java.nio.file.Paths
-import java.time.LocalDate
 import java.util.concurrent.Executors
 
 @Component
@@ -29,6 +29,10 @@ class Controller(private val httpClient: HttpClient) {
     @FXML
     private lateinit var loginButton: Button
     @FXML
+    private lateinit var startDatePicker: DatePicker
+    @FXML
+    private lateinit var endDatePicker: DatePicker
+    @FXML
     private lateinit var downloadButton: Button
     @FXML
     private lateinit var status: Label
@@ -43,6 +47,8 @@ class Controller(private val httpClient: HttpClient) {
         username.isDisable = true
         password.isDisable = true
         loginButton.isDisable = true
+        startDatePicker.isDisable = true
+        endDatePicker.isDisable = true
         downloadButton.isDisable = true
 
         // Create task
@@ -69,6 +75,8 @@ class Controller(private val httpClient: HttpClient) {
         task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED) {
             if (task.value) {
                 downloadButton.isDisable = !task.value
+                startDatePicker.isDisable = !task.value
+                endDatePicker.isDisable = !task.value
             } else {
                 username.isDisable = false
                 password.isDisable = false
@@ -81,14 +89,14 @@ class Controller(private val httpClient: HttpClient) {
     fun downloadButtonOnClick(actionEvent: ActionEvent) {
         downloadButton.isDisable = true
 
-        val startDate = LocalDate.now().minusDays(30)
-        val endDate = LocalDate.now()
+        val startDate = startDatePicker.value
+        val endDate = endDatePicker.value
 
         // Create task
         val task = object : Task<Boolean>() {
             override fun call(): Boolean {
                 try {
-                    updateMessage("Downloading...")
+                    updateMessage("Download from $startDate to $endDate")
                     httpClient.download(startDate, endDate, HttpClient.FileType.XML, Paths.get("./"))
                     updateMessage("Download successfully")
                 } catch (e: Exception) {
