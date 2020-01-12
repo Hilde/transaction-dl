@@ -10,14 +10,15 @@ import javafx.scene.control.DatePicker
 import javafx.scene.control.Label
 import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
+import javafx.stage.DirectoryChooser
 import mu.KotlinLogging
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import java.nio.file.Paths
+import java.io.File
 import java.time.LocalDate
 import java.util.concurrent.Executors
 
-class Controller() : KoinComponent {
+class Controller : KoinComponent {
 
     private val logger = KotlinLogging.logger {}
 
@@ -103,6 +104,14 @@ class Controller() : KoinComponent {
     fun downloadButtonOnClick(actionEvent: ActionEvent) {
         downloadButton.isDisable = true
 
+        val dirChooser = DirectoryChooser()
+        dirChooser.initialDirectory = File(System.getProperty("user.home"))
+        dirChooser.title = "Choose directory to save file"
+        val dir = dirChooser.showDialog(null)
+        if (dir == null) {
+            return
+        }
+
         val startDate = startDatePicker.value
         val endDate = endDatePicker.value
 
@@ -111,7 +120,7 @@ class Controller() : KoinComponent {
             override fun call(): Boolean {
                 try {
                     updateMessage("Download from $startDate to $endDate")
-                    httpClient.download(startDate, endDate, HttpClient.FileType.XML, Paths.get("./"))
+                    httpClient.download(startDate, endDate, HttpClient.FileType.XML, dir.toPath())
                     updateMessage("Download successfully")
                 } catch (e: Exception) {
                     logger.error(e) { "Login failed." }
