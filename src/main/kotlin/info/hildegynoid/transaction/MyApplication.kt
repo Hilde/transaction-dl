@@ -18,7 +18,7 @@ import org.koin.dsl.module
 import org.slf4j.bridge.SLF4JBridgeHandler
 
 const val APPLICATION_TITLE = "Transaction DL"
-const val APPLICATION_VERSION = "0.1.0"
+const val APPLICATION_VERSION = "0.1.1"
 
 class MyApplication : Application() {
 
