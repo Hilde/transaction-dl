@@ -93,16 +93,9 @@ runtime {
     modules = ['java.naming', 'java.xml', 'javafx.base', 'javafx.controls', 'javafx.fxml' ]
 
     jpackage {
-        jpackageHome = '/Library/Java/JavaVirtualMachines/jdk-14.jdk/Contents/Home'
-        outputDir = 'my-packaging'
-        // imageOutputDir = file("$buildDir/my-packaging-image")
-        // installerOutputDir = file("$buildDir/my-packaging-installer")
-        imageName = 'MyApp'
-        //imageOptions = ['--win-console']
-        skipInstaller = false
-        installerName = 'MyApp'
-        //installerType = 'msi'
-        //installerOptions = ['--win-menu', '--win-shortcut']
+        outputDir = 'installers'
+        imageName = 'Transaction DL'
+        skipInstaller = true
     }
 }
 
