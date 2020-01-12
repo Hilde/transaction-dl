@@ -11,14 +11,17 @@ import javafx.scene.control.Label
 import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
 import mu.KotlinLogging
-import org.springframework.stereotype.Component
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import java.nio.file.Paths
+import java.time.LocalDate
 import java.util.concurrent.Executors
 
-@Component
-class Controller(private val httpClient: HttpClient) {
+class Controller() : KoinComponent {
 
     private val logger = KotlinLogging.logger {}
+
+    private val httpClient: HttpClient by inject()
 
     private val executorService = Executors.newSingleThreadExecutor()
 
@@ -36,6 +39,13 @@ class Controller(private val httpClient: HttpClient) {
     private lateinit var downloadButton: Button
     @FXML
     private lateinit var status: Label
+
+    @FXML
+    fun initialize() {
+        val now = LocalDate.now()
+        startDatePicker.value = now.minusMonths(1)
+        endDatePicker.value = now
+    }
 
     @FXML
     fun loginButtonOnClick(actionEvent: ActionEvent) {

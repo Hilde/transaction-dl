@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="435.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="info.hildegynoid.transaction.ui.Controller">
+<AnchorPane prefHeight="400.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="info.hildegynoid.transaction.ui.Controller">
    <children>
       <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <HBox alignment="CENTER_LEFT">
@@ -29,11 +29,11 @@
                <Insets top="8.0" />
             </VBox.margin>
          </HBox>
-         <HBox prefHeight="49.0" prefWidth="560.0">
+         <HBox alignment="TOP_RIGHT" prefHeight="49.0" prefWidth="560.0">
             <children>
-               <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" onAction="#loginButtonOnClick" text="Login">
+               <Button fx:id="loginButton" defaultButton="true" mnemonicParsing="false" onAction="#loginButtonOnClick" prefWidth="100.0" text="Login">
                   <HBox.margin>
-                     <Insets left="310.0" />
+                     <Insets />
                   </HBox.margin></Button>
             </children>
             <VBox.margin>
@@ -59,11 +59,11 @@
                <Insets top="8.0" />
             </VBox.margin>
          </HBox>
-         <HBox prefHeight="100.0" prefWidth="200.0">
+         <HBox alignment="TOP_RIGHT">
             <children>
-               <Button fx:id="downloadButton" disable="true" mnemonicParsing="false" onAction="#downloadButtonOnClick" text="Download">
+               <Button fx:id="downloadButton" disable="true" mnemonicParsing="false" onAction="#downloadButtonOnClick" prefWidth="100.0" text="Download">
                   <HBox.margin>
-                     <Insets left="310.0" />
+                     <Insets />
                   </HBox.margin>
                </Button>
             </children>
@@ -71,7 +71,10 @@
                <Insets top="8.0" />
             </VBox.margin>
          </HBox>
-         <Label fx:id="status" />
+         <Label fx:id="status">
+            <VBox.margin>
+               <Insets top="8.0" />
+            </VBox.margin></Label>
          <padding>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </padding>

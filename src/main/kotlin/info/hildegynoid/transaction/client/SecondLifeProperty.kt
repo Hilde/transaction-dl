@@ -1,11 +1,6 @@
 package info.hildegynoid.transaction.client
 
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.stereotype.Component
-
-@Component
-@ConfigurationProperties(prefix = "second-life")
-class SecondLifeProperty(
+data class SecondLifeProperty(
     var loginUrl: String = "https://id.secondlife.com/openid/login",
     var loginSubmitUrl: String = "https://id.secondlife.com/openid/loginsubmit",
     var openIdAuthorizationUrl: String = "https://secondlife.com/auth/oid_return.php?redirect=https://secondlife.com/index.php&openid_identifier=https://id.secondlife.com/id/",

@@ -1,6 +1,6 @@
 package info.hildegynoid.transaction.data
 
-import org.springframework.stereotype.Component
+import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -8,12 +8,20 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-@Component
-class SessionStorage(private val yaml: Yaml) {
+class SessionStorage {
 
     var sessionFile: Path = Paths.get("session.yaml")
 
     var property: UsersProperty = UsersProperty()
+
+    private val yaml: Yaml
+        get() {
+            val options = DumperOptions()
+            options.defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
+            options.indicatorIndent = 2
+            options.indent = 4
+            return Yaml(options)
+        }
 
     fun open(sessionFile: Path? = null) {
         if (sessionFile != null) {
