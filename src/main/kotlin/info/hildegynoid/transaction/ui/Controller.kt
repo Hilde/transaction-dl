@@ -47,6 +47,10 @@ class Controller() : KoinComponent {
         endDatePicker.value = now
     }
 
+    fun shutdown() {
+        executorService.shutdown()
+    }
+
     @FXML
     fun loginButtonOnClick(actionEvent: ActionEvent) {
         if (username.text.isBlank() || password.text.isBlank()) {

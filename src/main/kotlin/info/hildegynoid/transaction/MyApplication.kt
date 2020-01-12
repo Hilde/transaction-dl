@@ -3,6 +3,7 @@ package info.hildegynoid.transaction
 import info.hildegynoid.transaction.client.HttpClient
 import info.hildegynoid.transaction.client.HttpClientImpl
 import info.hildegynoid.transaction.client.SecondLifeProperty
+import info.hildegynoid.transaction.ui.Controller
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.fxml.FXMLLoader
@@ -45,8 +46,11 @@ class MyApplication : Application() {
         stage.title = APPLICATION_TITLE + " Version." + getVersion()
         stage.show()
 
+        val controller = loader.getController<Controller>()
+
         stage.showingProperty().addListener { _, oldValue, newValue ->
             if (oldValue == true && newValue == false) {
+                controller.shutdown()
                 Platform.exit()
             }
         }
