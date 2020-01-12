@@ -109,6 +109,7 @@ class Controller : KoinComponent {
         dirChooser.title = "Choose directory to save file"
         val dir = dirChooser.showDialog(null)
         if (dir == null) {
+            downloadButton.isDisable = false
             return
         }
 
