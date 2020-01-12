@@ -1,0 +1,16 @@
+.gradle/
+.idea/
+build/
+work/
+
+/*.csv
+/*.xls
+/*.xml
+
+config/application.yml
+
+jdk/
+!jdk/jre-mac.sh
+!jdk/jre-win.bat
+
+.DS_Store
