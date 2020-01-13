@@ -22,7 +22,7 @@ mainClassName = "info.hildegynoid.transaction.MyApplication"
 ext {
     platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 
-    title = "Transactoon DL"
+    title = "Transaction DL"
 
     koinVersion = "2.0.1"
     kotlinLoggingVersion = "1.7.8"
