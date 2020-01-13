@@ -107,6 +107,20 @@ runtime {
     }
 }
 
+task zip(type: Zip, dependsOn: jpackage) {
+    archiveFileName = "Transaction.DL-v${project.version}-${platform}.zip"
+    switch (platform) {
+        case 'mac':
+            from "build/installers/Transaction DL.app"
+            into "Transaction DL.app"
+            break
+        case 'win':
+            from "build/installers/Transaction DL"
+            into "Transaction DL"
+            break
+    }
+}
+
 ktlint {
     disabledRules = ["import-ordering"]
 }
