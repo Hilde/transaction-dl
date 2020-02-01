@@ -9,7 +9,7 @@ plugins {
 }
 
 group "info.hildegynoid"
-version "0.1.1"
+version "0.1.2"
 
 repositories {
     mavenCentral()
@@ -90,7 +90,7 @@ jar {
 
 runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    modules = ['java.naming', 'java.xml', 'javafx.base', 'javafx.controls', 'javafx.fxml' ]
+    modules = ['java.naming', 'jdk.crypto.ec', 'javafx.base', 'javafx.controls', 'javafx.fxml' ]
 
     jpackage {
         outputDir = 'installers'
