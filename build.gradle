@@ -3,13 +3,15 @@ plugins {
     id 'application'
     id "org.jetbrains.kotlin.jvm" version "1.3.61"
     id "org.openjfx.javafxplugin" version "0.0.8"
-    id 'org.beryx.runtime' version '1.8.0'
+    id "org.beryx.runtime" version "1.8.0"
+    id 'de.fuerstenau.buildconfig' version '1.1.8'
+    id 'org.ajoberstar.grgit' version '4.0.1'
     id "com.google.osdetector" version "1.6.2"
     id "org.jlleitschuh.gradle.ktlint" version "9.1.1"
 }
 
 group "info.hildegynoid"
-version "0.1.2"
+version = gitVersion()
 
 repositories {
     mavenCentral()
@@ -21,7 +23,7 @@ mainClassName = "info.hildegynoid.transaction.MyApplication"
 ext {
     platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 
-    title = "Transactoon DL"
+    title = "Transaction DL"
 
     koinVersion = "2.0.1"
     kotlinLoggingVersion = "1.7.8"
@@ -61,6 +63,11 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "11"
 }
 
+buildConfig {
+    buildConfigField 'String', 'BUILD_NUMBER', gitBuildNumber()
+    buildConfigField 'String', 'TITLE', title
+}
+
 test {
     useJUnitPlatform()
 }
@@ -73,14 +80,14 @@ javafx {
 jar {
     dependsOn configurations.runtime
     from {
-        (configurations.runtime).collect {  it.isDirectory() ? it : zipTree(it)  }
+        (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) }
     } {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
     manifest {
-        attributes (
+        attributes(
                 'Implementation-Title': title,
                 'Implementation-Version': project.version,
                 'Main-Class': mainClassName
@@ -96,9 +103,58 @@ runtime {
         outputDir = 'installers'
         imageName = 'Transaction DL'
         skipInstaller = true
+        switch (platform) {
+            case 'mac':
+                imageOptions = ['--icon', "$buildDir/resources/main/icons/appicon.icns"]
+                break
+            case 'win':
+                imageOptions = ['--icon', "$buildDir/resources/main/icons/appicon.ico"]
+                break
+        }
+    }
+}
+
+task zip(type: Zip, dependsOn: jpackage) {
+    archiveFileName = "TransactionDL-v${project.version}-${platform}.zip"
+    switch (platform) {
+        case 'mac':
+            from "build/installers/Transaction DL.app"
+            into "Transaction DL.app"
+            break
+        case 'win':
+            from "build/installers/Transaction DL"
+            into "Transaction DL"
+            break
     }
 }
 
 ktlint {
     disabledRules = ["import-ordering"]
+}
+
+String gitVersion() {
+    def tags = grgit.tag.list().collect { it.getName() }
+    def versionStr
+    if (tags.any { it ==~ /v\d.*/ }) {
+        def build = grgit.describe(tags: true, match: ["v[0-9]*"])
+        if (build.indexOf("-") > 1) {
+            versionStr = build.substring(1, build.indexOf("-"))
+        } else {
+            versionStr = build.substring(1)
+        }
+    } else {
+        versionStr = "0.0.0"
+    }
+    return versionStr
+}
+
+String gitBuildNumber() {
+    def tags = grgit.tag.list().collect { it.getName() }
+    def versionStr
+    if (tags.any { it ==~ /v\d.*/ }) {
+        versionStr = grgit.describe(longDescr: false, tags: true, match: ["v[0-9]*"])
+    } else {
+        versionStr = grgit.head().abbreviatedId
+    }
+    return versionStr + (grgit.status().isClean() ? "" : "+dirty")
 }
