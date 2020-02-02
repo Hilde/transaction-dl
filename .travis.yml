@@ -1,0 +1,42 @@
+language: shell
+
+sudo: false
+
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+
+jobs:
+  include:
+  - os: windows
+    before_install:
+    - scripts/install_jdk_windows.sh
+    - export JAVA_HOME=$HOME/jdk-13
+    - export BADASS_RUNTIME_JPACKAGE_HOME=$HOME/jdk-14
+    - "./scripts/install_openjfx.sh windows"
+  - os: osx
+    before_install:
+    - scripts/install_jdk_mac.sh
+    - export JAVA_HOME=$HOME/jdk-13/Contents/Home
+    - export BADASS_RUNTIME_JPACKAGE_HOME=$HOME/jdk-14/Contents/Home
+    - "./scripts/install_openjfx.sh mac"
+
+install: "./gradlew assemble --no-daemon"
+
+before_deploy:
+  - "./gradlew zip --no-daemon"
+  - ls ./build/distributions/
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  file_glob: true
+  file: './build/distributions/*'
+  on:
+    repo: Hilde/transaction-dl
+    tags: true
