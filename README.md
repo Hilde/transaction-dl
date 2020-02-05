@@ -1,4 +1,4 @@
-# transaction-dl
+# transaction-dl [![Build Status](https://travis-ci.com/Hilde/transaction-dl.svg?branch=master)](https://travis-ci.com/Hilde/transaction-dl)
 
 An Second Life transaction downloader
 
