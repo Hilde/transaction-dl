@@ -1,9 +1,6 @@
 package info.hildegynoid.transaction
 
 import info.hildegynoid.BuildConfig
-import info.hildegynoid.transaction.client.HttpClient
-import info.hildegynoid.transaction.client.HttpClientImpl
-import info.hildegynoid.transaction.client.SecondLifeProperty
 import info.hildegynoid.transaction.ui.Controller
 import javafx.application.Application
 import javafx.application.Platform
@@ -14,16 +11,9 @@ import javafx.stage.Stage
 import org.koin.Logger.slf4jLogger
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import org.slf4j.bridge.SLF4JBridgeHandler
 
 class MyApplication : Application() {
-
-    private val module: Module = module {
-        single { SecondLifeProperty() }
-        single { HttpClientImpl(get()) as HttpClient }
-    }
 
     override fun init() {
         // jul to slf4j
@@ -32,7 +22,7 @@ class MyApplication : Application() {
 
         startKoin {
             slf4jLogger(Level.INFO)
-            modules(module)
+            modules(myModule)
         }
     }
 

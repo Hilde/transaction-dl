@@ -1,0 +1,12 @@
+users:
+  - username: Jon Doe
+    premium: false
+    sessionToken: 1234abcd
+  - username: Jane Doe
+    premium: true
+    sessionToken: 9876dcba
+downloadDir: "/tmp"
+downloadType:
+  csv: false
+  xls: true
+  xml: true
