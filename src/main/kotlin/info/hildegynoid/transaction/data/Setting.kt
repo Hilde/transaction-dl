@@ -8,10 +8,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class Setting {
-
-    // override fun getPath(): Path =
-    //     Paths.get(System.getProperty("user.home"), ".${BuildConfig.NAME}.yml")
-
     private val yaml: Yaml
         get() {
             val options = DumperOptions()

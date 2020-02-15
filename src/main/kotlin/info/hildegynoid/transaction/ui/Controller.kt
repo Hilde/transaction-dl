@@ -1,6 +1,9 @@
 package info.hildegynoid.transaction.ui
 
+import info.hildegynoid.BuildConfig
 import info.hildegynoid.transaction.client.HttpClient
+import info.hildegynoid.transaction.data.Setting
+import info.hildegynoid.transaction.data.SettingProperty
 import javafx.concurrent.Task
 import javafx.concurrent.WorkerStateEvent
 import javafx.event.ActionEvent
@@ -15,6 +18,9 @@ import mu.KotlinLogging
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDate
 import java.util.concurrent.Executors
 
@@ -23,6 +29,8 @@ class Controller : KoinComponent {
     private val logger = KotlinLogging.logger {}
 
     private val httpClient: HttpClient by inject()
+
+    private lateinit var settingProperty: SettingProperty
 
     private val executorService = Executors.newSingleThreadExecutor()
 
@@ -43,6 +51,7 @@ class Controller : KoinComponent {
 
     @FXML
     fun initialize() {
+        loadSetting()
         val now = LocalDate.now()
         startDatePicker.value = now.minusMonths(1)
         endDatePicker.value = now
@@ -50,6 +59,7 @@ class Controller : KoinComponent {
 
     fun shutdown() {
         executorService.shutdown()
+        saveSetting()
     }
 
     @FXML
@@ -67,14 +77,17 @@ class Controller : KoinComponent {
         downloadButton.isDisable = true
 
         // Create task
-        val user = username.text
-        val pass = password.text
         val task = object : Task<Boolean>() {
             override fun call(): Boolean =
                 try {
                     updateMessage("Logging in...")
-                    httpClient.login(user, pass)
+                    httpClient.login(username.text, password.text)
                     updateMessage("Login successfully")
+
+                    if (settingProperty.users.size == 0) {
+                        val user = SettingProperty.User(username = username.text)
+                        settingProperty.users.add(user)
+                    }
                     true
                 } catch (e: Exception) {
                     logger.error(e) { "Login failed." }
@@ -104,14 +117,18 @@ class Controller : KoinComponent {
     fun downloadButtonOnClick(actionEvent: ActionEvent) {
         downloadButton.isDisable = true
 
+        val initialDir = settingProperty.downloadDir
+            .ifEmpty { System.getProperty("user.home") }
+
         val dirChooser = DirectoryChooser()
-        dirChooser.initialDirectory = File(System.getProperty("user.home"))
+        dirChooser.initialDirectory = File(initialDir)
         dirChooser.title = "Choose directory to save file"
         val dir = dirChooser.showDialog(null)
         if (dir == null) {
             downloadButton.isDisable = false
             return
         }
+        settingProperty.downloadDir = dir.absolutePath
 
         val startDate = startDatePicker.value
         val endDate = endDatePicker.value
@@ -142,6 +159,40 @@ class Controller : KoinComponent {
             password.isDisable = false
             loginButton.isDisable = false
             downloadButton.isDisable = false
+        }
+    }
+
+    private fun loadSetting() {
+        val path = Paths.get(System.getProperty("user.home"), ".${BuildConfig.NAME}.yml")
+        settingProperty = if (Files.exists(path)) {
+            try {
+                val setting = Setting()
+                setting.open(path)
+            } catch (ex: IOException) {
+                logger.warn(ex) { "Could not open setting file: ${ex.message}" }
+                SettingProperty()
+            }
+        } else {
+            SettingProperty()
+        }
+
+        if (settingProperty.users.size > 0) {
+            settingProperty.users[0].let {
+                if (it.username.isNotEmpty()) {
+                    username.text = it.username
+                }
+            }
+        }
+    }
+
+    private fun saveSetting() {
+        try {
+            val path = Paths.get(System.getProperty("user.home"), ".${BuildConfig.NAME}.yml")
+            val setting = Setting()
+            setting.save(path, settingProperty)
+            logger.debug { settingProperty }
+        } catch (ex: IOException) {
+            logger.warn(ex) { "Could not save setting: ${ex.message}" }
         }
     }
 }
