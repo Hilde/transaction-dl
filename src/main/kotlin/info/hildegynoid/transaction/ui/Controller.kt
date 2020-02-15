@@ -6,7 +6,6 @@ import info.hildegynoid.transaction.data.Setting
 import info.hildegynoid.transaction.data.SettingProperty
 import javafx.concurrent.Task
 import javafx.concurrent.WorkerStateEvent
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.scene.control.Button
 import javafx.scene.control.DatePicker
@@ -83,11 +82,6 @@ class Controller : KoinComponent {
                     updateMessage("Logging in...")
                     httpClient.login(username.text, password.text)
                     updateMessage("Login successfully")
-
-                    if (settingProperty.users.size == 0) {
-                        val user = SettingProperty.User(username = username.text)
-                        settingProperty.users.add(user)
-                    }
                     true
                 } catch (e: Exception) {
                     logger.error(e) { "Login failed." }
@@ -103,8 +97,6 @@ class Controller : KoinComponent {
         task.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED) {
             if (task.value) {
                 downloadButton.isDisable = !task.value
-                startDatePicker.isDisable = !task.value
-                endDatePicker.isDisable = !task.value
             } else {
                 username.isDisable = false
                 password.isDisable = false
@@ -176,6 +168,7 @@ class Controller : KoinComponent {
             SettingProperty()
         }
 
+        // Username
         if (settingProperty.users.size > 0) {
             settingProperty.users[0].let {
                 if (it.username.isNotEmpty()) {
@@ -186,6 +179,14 @@ class Controller : KoinComponent {
     }
 
     private fun saveSetting() {
+        // Username
+        if (settingProperty.users.size == 0) {
+            val user = SettingProperty.User(username = username.text)
+            settingProperty.users.add(user)
+        } else {
+            settingProperty.users[0].username = username.text
+        }
+
         try {
             val path = Paths.get(System.getProperty("user.home"), ".${BuildConfig.NAME}.yml")
             val setting = Setting()
