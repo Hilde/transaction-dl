@@ -35,7 +35,7 @@ deploy:
     secure: k7UEH551dPtKJjry8KqHGgnsrSwLPhZlmpniMUCBg3em8KQBNr7TQvAr/vwpK9pUcKLTtFjtzquV8t5b1EPwBP5qBTBzy2wecnpwfzPfkuugB3EJCUxyscZMTyejY849yez+ZKmXl3cMUlKgZ2gsXx2FNwJQdSY+IUCW2kZ3aSnzdhZy+jmsf9jh8Y+3NRu74l9Kwk+KpdxR+K0vdUMgJgMIMzMuJ8PlvxenW7WaM/ptDdbp76GcPXx5nRiJ9JcjvZxf36DBkRjv0dnmykPtLNmg/mtBHVlE+fxufpvQAXweEu41lnf59j0iZ6rMY8OmHtil9rt1/qSq1WHimTyQ4aP/u/0I5Yw1BIrCk5n5FbbEOK9XrCviZBTHEY0WdgAWlHjsOg62ZV34YAGTGmRaIueCLZp1h1xsmUEqcBEatvL5+zel13bIpoOQ1FnB1IZpWxiUl9pzfRqnEvOihFWjNMTGXyPaTFmS+qgDep51HV6wL9JanEhUgq6hGDNQK8UNqnxoww3DvX3BwTqxupQGrA+EPRmefmdJ+emwRMlC+ep9lLxizVIh42VGPFKG4UIaRs1A0W3mYDp/nhptUif62jQ500AMqvTrtZGQBFwJMI+PtqGtsaiHFMmJKef4nV4SFwvkFfyOtq77VN3jCU8KjZ4oD/FAXu3mHS96VxftpKM=
   skip_cleanup: true
   file_glob: true
-  file: './build/distributions/*'
+  file: './build/distributions/Transaction*'
   on:
     repo: Hilde/transaction-dl
     tags: true
