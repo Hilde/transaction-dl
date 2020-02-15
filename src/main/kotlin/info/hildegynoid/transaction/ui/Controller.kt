@@ -8,6 +8,7 @@ import javafx.concurrent.Task
 import javafx.concurrent.WorkerStateEvent
 import javafx.fxml.FXML
 import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
 import javafx.scene.control.DatePicker
 import javafx.scene.control.Label
 import javafx.scene.control.PasswordField
@@ -44,6 +45,12 @@ class Controller : KoinComponent {
     @FXML
     private lateinit var endDatePicker: DatePicker
     @FXML
+    private lateinit var csvFileType: CheckBox
+    @FXML
+    private lateinit var xlsFileType: CheckBox
+    @FXML
+    private lateinit var xmlFileType: CheckBox
+    @FXML
     private lateinit var downloadButton: Button
     @FXML
     private lateinit var status: Label
@@ -71,8 +78,6 @@ class Controller : KoinComponent {
         username.isDisable = true
         password.isDisable = true
         loginButton.isDisable = true
-        startDatePicker.isDisable = true
-        endDatePicker.isDisable = true
         downloadButton.isDisable = true
 
         // Create task
@@ -130,7 +135,15 @@ class Controller : KoinComponent {
             override fun call(): Boolean {
                 try {
                     updateMessage("Download from $startDate to $endDate")
-                    httpClient.download(startDate, endDate, HttpClient.FileType.XML, dir.toPath())
+                    if (csvFileType.isSelected) {
+                        httpClient.download(startDate, endDate, HttpClient.FileType.CSV, dir.toPath())
+                    }
+                    if (xlsFileType.isSelected) {
+                        httpClient.download(startDate, endDate, HttpClient.FileType.XLS, dir.toPath())
+                    }
+                    if (xmlFileType.isSelected) {
+                        httpClient.download(startDate, endDate, HttpClient.FileType.XML, dir.toPath())
+                    }
                     updateMessage("Download successfully")
                 } catch (e: Exception) {
                     logger.error(e) { "Login failed." }
@@ -176,6 +189,13 @@ class Controller : KoinComponent {
                 }
             }
         }
+
+        // File types
+        settingProperty.downloadType.apply {
+            csvFileType.isSelected = csv
+            xlsFileType.isSelected = xls
+            xmlFileType.isSelected = xml
+        }
     }
 
     private fun saveSetting() {
@@ -185,6 +205,13 @@ class Controller : KoinComponent {
             settingProperty.users.add(user)
         } else {
             settingProperty.users[0].username = username.text
+        }
+
+        // File types
+        settingProperty.downloadType.apply {
+            csv = csvFileType.isSelected
+            xls = xlsFileType.isSelected
+            xml = xmlFileType.isSelected
         }
 
         try {
