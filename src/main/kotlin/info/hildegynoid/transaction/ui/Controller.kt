@@ -63,7 +63,7 @@ class Controller : KoinComponent {
     }
 
     @FXML
-    fun loginButtonOnClick(actionEvent: ActionEvent) {
+    fun loginButtonOnClick() {
         if (username.text.isBlank() || password.text.isBlank()) {
             status.text = "Username and password needed"
             return
@@ -114,7 +114,7 @@ class Controller : KoinComponent {
     }
 
     @FXML
-    fun downloadButtonOnClick(actionEvent: ActionEvent) {
+    fun downloadButtonOnClick() {
         downloadButton.isDisable = true
 
         val initialDir = settingProperty.downloadDir
