@@ -13,14 +13,14 @@ jobs:
     - os: windows
       before_install:
         - scripts/install_jdk_windows.sh
-        - export JAVA_HOME=$HOME/jdk-13
-        - export BADASS_RUNTIME_JPACKAGE_HOME=$HOME/jdk-14
+        - export JAVA_HOME=$HOME/jdk-14
+        - export BADASS_RUNTIME_JPACKAGE_HOME=$JAVA_HOME
         - "./scripts/install_openjfx.sh windows"
     - os: osx
       before_install:
         - scripts/install_jdk_mac.sh
-        - export JAVA_HOME=$HOME/jdk-13/Contents/Home
-        - export BADASS_RUNTIME_JPACKAGE_HOME=$HOME/jdk-14/Contents/Home
+        - export JAVA_HOME=$HOME/jdk-14/Contents/Home
+        - export BADASS_RUNTIME_JPACKAGE_HOME=$JAVA_HOME
         - "./scripts/install_openjfx.sh mac"
 
 install: "./gradlew assemble --no-daemon"
