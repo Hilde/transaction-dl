@@ -17,7 +17,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-unzip openjfx-jmods.zip
+unzip -q openjfx-jmods.zip
 if [ $? -ne 0 ]; then
   echo OpenJFX extracting failed.
   exit 1
