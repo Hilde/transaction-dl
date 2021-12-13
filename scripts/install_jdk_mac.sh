@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 function jdk14() {
-  URL="https://download.java.net/java/early_access/jdk14/33/GPL/openjdk-14-ea+33_osx-x64_bin.tar.gz"
+  URL="https://download.java.net/java/GA/jdk14.0.2/205943a0976c4ed48cb16f1043c5c647/12/GPL/openjdk-14.0.2_osx-x64_bin.tar.gz"
   curl -L -o openjdk14.tgz $URL
   if [ $? -ne 0 ]; then
     echo JDK downloading failed from $URL
