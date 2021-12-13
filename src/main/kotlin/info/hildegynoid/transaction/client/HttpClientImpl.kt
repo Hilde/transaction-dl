@@ -31,21 +31,42 @@ class HttpClientImpl(private val property: SecondLifeProperty) : HttpClient {
             .build()
     }
 
+    private fun getCsrfToken(): String {
+        val request = Request.Builder()
+            .url(property.loginUrl)
+            .get()
+            .build()
+
+        return httpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            val body = response.body?.string() ?: throw Exception("No document")
+
+            Jsoup.parse(body)
+                .select("#loginform input[name=\"csrfmiddlewaretoken\"]")
+                .first()?.attr("value") ?: throw Exception("No csrf token")
+        }
+    }
+
     override fun login(username: String, password: String) {
         logger.info { "Login start" }
 
+        val csrfToken = getCsrfToken()
+
         val formBody = FormBody.Builder()
+            .add("csrfmiddlewaretoken", csrfToken)
             .add("username", username)
             .add("password", password)
-            .add("stay_logged_in", "stay_logged_in")
             .add("Submit", "")
             .add("return_to", "https://www.secondlife.com")
             .add("previous_language", "en_US")
             .add("language", "en_US")
+            .add("stay_logged_in", "stay_logged_in")
             .add("show_join", "True")
+            .add("from_amazon", "")
             .build()
         val request = Request.Builder()
             .url(property.loginSubmitUrl)
+            .addHeader("Referer", "https://id.secondlife.com/")
             .post(formBody)
             .build()
         httpClient.newCall(request).execute().use { response ->
@@ -72,16 +93,15 @@ class HttpClientImpl(private val property: SecondLifeProperty) : HttpClient {
             val body = response.body!!.string()
 
             val doc = Jsoup.parse(body)
-            val form = doc.select("form#openid_message").first()
-            val action = form.attr("action")
-            val message = hashMapOf<String, String>()
-            form.select("input").forEach {
-                val name = it.attr("name")
-                val value = it.attr("value")
-                message[name] = value
-            }
+            doc.select("form#openid_message").first()?.let { form ->
+                val action = form.attr("action")
+                val message = hashMapOf<String, String>()
+                form.select("input").forEach {
+                    val name = it.attr("name")
+                    val value = it.attr("value")
+                    message[name] = value
+                }
 
-            if (action != null && message.isNotEmpty()) {
                 logger.debug { "Start OpenID AuthZ submit" }
                 val body3Builder = FormBody.Builder()
                 message.forEach { (t, u) -> body3Builder.add(t, u) }
@@ -134,7 +154,7 @@ class HttpClientImpl(private val property: SecondLifeProperty) : HttpClient {
         val doc = Jsoup.parse(html)
         val form = doc.selectFirst("form#loginform") ?: return false
         logger.trace { html }
-        val errorMessage = form.selectFirst("div.error").text()
+        val errorMessage = form.selectFirst("div.error")?.text() ?: ""
         return !errorMessage.contains("the username or password that you entered were incorrect")
     }
 }
