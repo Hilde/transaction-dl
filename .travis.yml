@@ -13,26 +13,24 @@ jobs:
     - os: windows
       before_install:
         - scripts/install_jdk_windows.sh
-        - export JAVA_HOME=$HOME/jdk-13
-        - export BADASS_RUNTIME_JPACKAGE_HOME=$HOME/jdk-14
+        - export JAVA_HOME=$TRAVIS_BUILD_DIR/work/jdk-win
         - "./scripts/install_openjfx.sh windows"
     - os: osx
       before_install:
         - scripts/install_jdk_mac.sh
-        - export JAVA_HOME=$HOME/jdk-13/Contents/Home
-        - export BADASS_RUNTIME_JPACKAGE_HOME=$HOME/jdk-14/Contents/Home
-        - "./scripts/install_openjfx.sh mac"
+        - export JAVA_HOME=$TRAVIS_BUILD_DIR/work/jdk-mac/Contents/Home
+        - "./scripts/install_openjfx.sh osx"
 
 install: "./gradlew assemble --no-daemon"
 
 before_deploy:
-  - "./gradlew zip --no-daemon"
+  - "./gradlew jpackageImage zip --no-daemon"
   - ls ./build/distributions/
 
 deploy:
   provider: releases
   api_key:
-    secure: "rEKoJsUXbqBZsPtj+RqlGa6O279W9x956dgnOoSTop0h0TdQqK465Nh/3lfWMHZqzAkoShHR03RzDi006Ua7aVGP74F3nOuu0OV8BRfaDNqT6Ha/EMEhTpppxFM7Fs72G6tF1fbnypVC1Q0SVMwAO4S7UBfFe+aeIrMD4Ofc7Q5J5k1TVNO5jBS11vImeMwt6Ghs9EMehK/29/KE/kZnwsig6kRQ86txE7vgIjXahM0TGLWBk4B8ehc3xEv++2nN7F7y1jC+eN2rNptdVJ5i8qCsg67hJfb5cAowZs0huXXlehDvtiy5hr0z6CwVMGPmw3jTydksnAvKaHa5IPOvZlYpjKGXjLHrPreGWWGv9EvFWynxHM1ROWtJXKhN6+2cGgqZaGjQHu/ehi+A8NaSVL2qpZGXeWvMkw/r93rYMA1YLwMS8/TPiHjYRYihVwLfhMydAHOHwX/opwS2G0WjxFwAD2RfaVUy4IHbud+YuR43+VOJtibDFpzP62Z0CfqGF9WHO3Fy+NumYv3fIc3jDY12eT2kNkOF+cYLwImiv1CxYp7N9cagz4dxZI54Pxjd8+x9k9KE9u3lLvlsxKQAfLaGq36uSoBAph60gvaqeGdLTvQ5tJJUlV/LZYaD/hlxNcBqpp/DzyAAyL9nT1JaZC7sUySqNn2zYgLJQu0DlEQ="
+    secure: k7UEH551dPtKJjry8KqHGgnsrSwLPhZlmpniMUCBg3em8KQBNr7TQvAr/vwpK9pUcKLTtFjtzquV8t5b1EPwBP5qBTBzy2wecnpwfzPfkuugB3EJCUxyscZMTyejY849yez+ZKmXl3cMUlKgZ2gsXx2FNwJQdSY+IUCW2kZ3aSnzdhZy+jmsf9jh8Y+3NRu74l9Kwk+KpdxR+K0vdUMgJgMIMzMuJ8PlvxenW7WaM/ptDdbp76GcPXx5nRiJ9JcjvZxf36DBkRjv0dnmykPtLNmg/mtBHVlE+fxufpvQAXweEu41lnf59j0iZ6rMY8OmHtil9rt1/qSq1WHimTyQ4aP/u/0I5Yw1BIrCk5n5FbbEOK9XrCviZBTHEY0WdgAWlHjsOg62ZV34YAGTGmRaIueCLZp1h1xsmUEqcBEatvL5+zel13bIpoOQ1FnB1IZpWxiUl9pzfRqnEvOihFWjNMTGXyPaTFmS+qgDep51HV6wL9JanEhUgq6hGDNQK8UNqnxoww3DvX3BwTqxupQGrA+EPRmefmdJ+emwRMlC+ep9lLxizVIh42VGPFKG4UIaRs1A0W3mYDp/nhptUif62jQ500AMqvTrtZGQBFwJMI+PtqGtsaiHFMmJKef4nV4SFwvkFfyOtq77VN3jCU8KjZ4oD/FAXu3mHS96VxftpKM=
   skip_cleanup: true
   file_glob: true
   file: './build/distributions/Transaction*'

@@ -81,7 +81,7 @@ class HttpClientImpl(private val property: SecondLifeProperty) : HttpClient {
 
         logger.debug { "Start OpenID AuthZ request" }
         val request2 = Request.Builder()
-            .url(property.openIdAuthorizationUrl + username.replace(" ", ".").toLowerCase())
+            .url(property.openIdAuthorizationUrl + username.replace(" ", ".").lowercase())
             .get()
             .build()
         httpClient.newCall(request2).execute().use { response ->

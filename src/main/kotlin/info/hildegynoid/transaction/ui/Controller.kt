@@ -1,7 +1,9 @@
 package info.hildegynoid.transaction.ui
 
-import info.hildegynoid.BuildConfig
 import info.hildegynoid.transaction.client.HttpClient
+import info.hildegynoid.transaction.MyApplication.Companion.NAME
+import info.hildegynoid.transaction.client.HttpClientImpl
+import info.hildegynoid.transaction.client.SecondLifeProperty
 import info.hildegynoid.transaction.data.Setting
 import info.hildegynoid.transaction.data.SettingProperty
 import javafx.concurrent.Task
@@ -15,8 +17,6 @@ import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
 import javafx.stage.DirectoryChooser
 import mu.KotlinLogging
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -24,11 +24,11 @@ import java.nio.file.Paths
 import java.time.LocalDate
 import java.util.concurrent.Executors
 
-class Controller : KoinComponent {
+class Controller {
 
     private val logger = KotlinLogging.logger {}
 
-    private val httpClient: HttpClient by inject()
+    private val httpClient = HttpClientImpl(SecondLifeProperty())
 
     private lateinit var settingProperty: SettingProperty
 
@@ -132,7 +132,7 @@ class Controller : KoinComponent {
 
         // Create task
         val task = object : Task<Boolean>() {
-            override fun call(): Boolean {
+            override fun call(): Boolean =
                 try {
                     updateMessage("Download from $startDate to $endDate")
                     if (csvFileType.isSelected) {
@@ -145,13 +145,12 @@ class Controller : KoinComponent {
                         httpClient.download(startDate, endDate, HttpClient.FileType.XML, dir.toPath())
                     }
                     updateMessage("Download successfully")
+                    true
                 } catch (e: Exception) {
                     logger.error(e) { "Login failed." }
                     updateMessage("Download failed: ${e.message}")
-                    return false
+                    false
                 }
-                return true
-            }
         }
 
         // Bind
@@ -168,7 +167,7 @@ class Controller : KoinComponent {
     }
 
     private fun loadSetting() {
-        val path = Paths.get(System.getProperty("user.home"), ".${BuildConfig.NAME}.yml")
+        val path = Paths.get(System.getProperty("user.home"), ".${NAME}.yml")
         settingProperty = if (Files.exists(path)) {
             try {
                 val setting = Setting()
@@ -215,7 +214,7 @@ class Controller : KoinComponent {
         }
 
         try {
-            val path = Paths.get(System.getProperty("user.home"), ".${BuildConfig.NAME}.yml")
+            val path = Paths.get(System.getProperty("user.home"), ".${NAME}.yml")
             val setting = Setting()
             setting.save(path, settingProperty)
             logger.debug { settingProperty }
