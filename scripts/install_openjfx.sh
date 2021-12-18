@@ -34,4 +34,4 @@ if [ $? -ne 0 ]; then
 fi
 rm openjfx-jmods.zip
 mv javafx-jmods-${VERSION}/*.jmod $JAVA_HOME/jmods/
-popd
+
