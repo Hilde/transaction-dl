@@ -4,8 +4,6 @@ OS=$1
 VERSION="17.0.1"
 ARCH="x64"
 
-BASEDIR=$(dirname $0)
-
 if [ "$OS" == "" ]; then
   echo Specify the os: windows, osx, linux
   exit 1
@@ -20,7 +18,6 @@ case "$OS" in
     ;;
 esac
 
-pushd $BASEDIR/../work
 URL="https://download2.gluonhq.com/openjfx/${VERSION}/openjfx-${VERSION}_${OS}-${ARCH}_bin-jmods.zip"
 curl -L -o openjfx-jmods.zip $URL
 if [ $? -ne 0 ]; then
