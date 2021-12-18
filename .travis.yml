@@ -12,14 +12,13 @@ jobs:
   include:
     - os: windows
       before_install:
-        - ls $HOME
         - scripts/install_jdk_windows.sh
-        - export JAVA_HOME=$HOME/work/jdk-win
+        - export JAVA_HOME=$HOME/build/work/jdk-win
         - "./scripts/install_openjfx.sh windows"
     - os: osx
       before_install:
         - scripts/install_jdk_mac.sh
-        - export JAVA_HOME=$HOME/work/jdk-mac/Contents/Home
+        - export JAVA_HOME=$HOME/build/work/jdk-mac/Contents/Home
         - "./scripts/install_openjfx.sh osx"
 
 install: "./gradlew assemble --no-daemon"
