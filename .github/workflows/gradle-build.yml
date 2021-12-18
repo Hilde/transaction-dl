@@ -24,6 +24,7 @@ jobs:
       - name: "Setup openjfx mods"
         if: runner.os == 'Windows'
         run: scripts/install_openjfx.sh windows
+        shell: bash
 
       - name: build
         uses: eskatos/gradle-command-action@v1
